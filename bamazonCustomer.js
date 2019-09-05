@@ -1,5 +1,5 @@
 var mysql = require("mysql");
-var inquirer = require('inquirer');
+var inquirer = require("inquirer");
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -10,56 +10,67 @@ var connection = mysql.createConnection({
   database: "bamazon"
 });
 
-connection.connect(function(err) {
-    if (err) throw err;
-    console.log("connected as id " + connection.threadId + "\n");
-  });
-
-  connection.query('SELECT * FROM products', function (err, res) {
-    if (err) throw err;
-    console.log(res);
-    //Here
-inquirer
-  .prompt([
-
-    {
-    type: "input",
-    name: "product_id",
-    message: "Choose product ID."
-    //validate method, which checks to se if user entered number
-    },
-    {
-        type: "input",
-        name: "quantity",
-        message: "Choose the number of products."
-        //validate method, which checks to se if user entered number
-        }
-  ])
-  .then(answers => {
-    console.log(answers);
-    connection.query('SELECT * FROM products WHERE id=?',[answers.product_id], function (err, res) {
-        if(err) throw(err);
-        console.log(res);
-        //If results are zero check here and return so it does not ref stock qty
-        if(res[0].stock_quantity >= +answers.quantity){
-            var newQty = res[0].stock_quantity - +answers.quantity;
-            connection.query('UPDATE products SET stock_quantity=? WHERE id=?',[newQty, answers.product_id], function (err, res) {
-                if (err)throw err;
-                console.log(res);
-            })
-            //We can make a sale
-            //Make another query to UPDATE what ever produxt at that id to the new stick QTY
-            //Calculate users total cost and console log back
-            //More advanced set up your app so you can re run the products so user coudl pruchase more
-        }
-        else {
-            //Let user know in fact not enough QTY
-        }
-    })
-  })
-  .catch(err => {
-      console.log(err);
-  });
-
+connection.connect(function(err){
+   if(err)throw err;
+   console.log("connected as id" + connection.threadId);
 });
+
+var displayProducts = function(){
+   var query = "Select * FROM products";
+   connection.query(query, function(err, res){
+       if(err) throw err;
+
+       console.table(res)
+    displayTable = [];
+       for(var i = 0; i < res.length; i++){
+           displayTable.push(
+               [res[i].item_id,res[i].product_name, res[i].department_name, res[i].price, res[i].stock_quantity]
+               );
+       }
+       console.log(displayTable.toString());
+       purchasePrompt();
+   });
+}
+
+function purchasePrompt(){
+   inquirer.prompt([
+   {
+       name: "ID",
+       type: "input",
+       message:"Please enter Item ID you like to purhcase.",
+       filter:Number
+   },
+   {
+       name:"Quantity",
+       type:"input",
+       message:"How many items do you wish to purchase?",
+       filter:Number
+   },
+
+]).then(function(answers){
+    var quantityNeeded = answers.Quantity;
+    var IDrequested = answers.ID;
+    orderForm(IDrequested, quantityNeeded);
+});
+};
+
+function orderForm(ID, numOfItem){
+   connection.query('Select * FROM products WHERE id = ' + ID, function(err,res){
+       if(err){console.log(err)};
+       if(numOfItem <= res[0].stock_quantity){
+           var totalCost = res[0].price * numOfItem;
+           console.log("Awesome! Your order is in stock!");
+           console.log("Your total cost for " + numOfItem + " " +res[0].product_name + " is " + totalCost + " Thank you!");
+
+           connection.query("UPDATE products SET stock_quantity = stock_quantity - " + numOfItem + " WHERE id = " + ID);
+       } else{
+           console.log("Insufficient quantity, sorry we do not have enough " + res[0].product_name + "to complete your order.");
+       };
+       displayProducts();
+   });
+};
+
+displayProducts(); 
+
+
 
