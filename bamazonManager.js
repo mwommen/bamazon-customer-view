@@ -26,9 +26,9 @@ var managerSelection = function() {
                     'View low Inventory',
                     'Add to Inventory',
                     'Add new Product' ]
-}
+},
 
-
+console.log("We got here")
 ]).then (function(answer) {
     switch (answer.action) {
         case "View Products for Sale":
@@ -40,7 +40,7 @@ var managerSelection = function() {
             break;
 
         case "Add to Inventory":
-            addToInventory(); 
+            addInventory(); 
             break;
 
         case "Add New Product":
@@ -48,6 +48,4 @@ var managerSelection = function() {
             break; 
     }
 });
-
-
 };

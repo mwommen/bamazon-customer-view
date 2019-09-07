@@ -14,4 +14,9 @@ If the stock quantity is less than the number of items being purchased, aler the
 Promt user to select a small amount or different item. 
 
 
+BAMAZON MANAGER------
+ This file will allow for manager duties such as view and add to the inventory, view and add products to the table. 
+
+ using the same 
+
 
