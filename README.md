@@ -16,7 +16,8 @@ Promt user to select a small amount or different item.
 
 BAMAZON MANAGER------
  This file will allow for manager duties such as view and add to the inventory, view and add products to the table. 
+ Create different functions for each manager option.
 
- using the same 
+
 
 

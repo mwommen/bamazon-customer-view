@@ -70,7 +70,7 @@ function orderForm(ID, numOfItem){
    });
 };
 
-displayProducts(); 
+ displayProducts(); 
 
 
 

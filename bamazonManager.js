@@ -49,3 +49,5 @@ console.log("We got here")
     }
 });
 };
+//After this I need to create a function for each of the cases to allow the manager to view products, add products, 
+// view the inventory, and add to inventory. 
